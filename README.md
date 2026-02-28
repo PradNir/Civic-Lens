@@ -1,0 +1,100 @@
+# Civic Lens
+
+Civic Lens is a full-stack civic issue reporting app.
+
+- Citizens can submit local infrastructure issues with a photo.
+- Gemini classifies the issue category from the image.
+- Reports are stored in MongoDB and can be tracked by ticket ID.
+
+## Tech Stack
+
+- Client: React (Create React App), React Router, Auth0, Axios
+- Server: Node.js, Express, Mongoose, Google Generative AI SDK
+- Database: MongoDB Atlas
+
+## Project Structure
+
+```text
+civic-lens/
+  client/   # React frontend
+  server/   # Express API
+```
+
+## Prerequisites
+
+- Node.js 18+ and npm
+- MongoDB Atlas connection string
+- Google Gemini API key
+- Auth0 app credentials (for frontend sign-in)
+
+## Environment Variables
+
+### `server/.env`
+
+```env
+MONGO_URI=your_mongodb_connection_string
+GEMINI_API_KEY=your_gemini_api_key
+GEMINI_MODEL=gemini-2.5-flash
+PORT=5000
+```
+
+### `client/.env`
+
+```env
+REACT_APP_API_URL=http://localhost:5000
+REACT_APP_AUTH0_DOMAIN=your-auth0-domain
+REACT_APP_AUTH0_CLIENT_ID=your-auth0-client-id
+```
+
+## Install
+
+From repo root:
+
+```bash
+cd server
+npm install
+
+cd ../client
+npm install
+```
+
+## Run Locally
+
+Start backend:
+
+```bash
+cd server
+npm start
+```
+
+Start frontend (new terminal):
+
+```bash
+cd client
+npm start
+```
+
+App URLs:
+
+- Frontend: `http://localhost:3000`
+- Backend: `http://localhost:5000`
+
+## Key API Endpoints
+
+- `POST /api/tickets/classify` - classify issue image with Gemini
+- `POST /api/tickets` - create ticket
+- `GET /api/tickets/:id` - fetch ticket by reference ID (e.g. `CVL-4821`)
+
+## Build
+
+```bash
+cd client
+npm run build
+```
+
+## Notes
+
+- `.env` files are gitignored.
+- If Gemini classification fails, verify `GEMINI_API_KEY` and `GEMINI_MODEL`.
+- If ticket lookup fails, make sure frontend `REACT_APP_API_URL` points to the running backend.
+
