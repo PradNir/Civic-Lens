@@ -92,9 +92,42 @@ cd client
 npm run build
 ```
 
+## Deployment (Vultr + Cloudflare Tunnel)
+
+This project is deployed on Vultr, and Cloudflare Tunnel may be used to expose services during setup/testing.
+
+- Vultr: hosts the backend service.
+- Cloudflare Tunnel: optional public tunnel endpoint (often `*.trycloudflare.com`).
+
+### Recommended Production Setup
+
+1. Use a stable API domain in frontend env:
+
+```env
+REACT_APP_API_URL=https://api.yourdomain.com
+```
+
+2. Do not hardcode temporary tunnel URLs in client code.
+3. Keep Cloudflare tunnel URLs for temporary testing only (they can rotate).
+4. Restrict backend CORS to your real frontend domain (and optional tunnel domain during testing).
+
+### Example CORS Allowlist (server)
+
+```js
+app.use(
+  cors({
+    origin: [
+      'https://your-frontend-domain.com',
+      'https://optional-temp-tunnel.trycloudflare.com',
+    ],
+  })
+);
+```
+
 ## Notes
 
 - `.env` files are gitignored.
 - If Gemini classification fails, verify `GEMINI_API_KEY` and `GEMINI_MODEL`.
 - If ticket lookup fails, make sure frontend `REACT_APP_API_URL` points to the running backend.
+- If using Cloudflare Tunnel, treat it as temporary unless you configure a stable custom domain.
 
