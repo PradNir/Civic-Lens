@@ -1,5 +1,5 @@
 // Civic Lens Admin - updated for PickHacks 2026
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 
@@ -11,11 +11,18 @@ export default function Navbar() {
   const hasDepartmentAccess = Boolean(user?.['https://civic-lens/department']);
   const isAdminContext = location.pathname.startsWith('/admin');
   const homeTarget = isAdminUser || hasDepartmentAccess || isAdminContext ? '/admin' : '/';
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 0);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <nav
       style={{
-        background: '#1B6B3A',
+        background: '#111827',
         height: 50,
         display: 'flex',
         alignItems: 'center',
@@ -23,8 +30,9 @@ export default function Navbar() {
         padding: '0 16px',
         position: 'sticky',
         top: 0,
-        zIndex: 100,
+        zIndex: 50,
         borderBottom: '1px solid #145C30',
+        boxShadow: scrolled ? '0 2px 12px rgba(0,0,0,0.25)' : 'none',
       }}
     >
       <div
@@ -56,6 +64,37 @@ export default function Navbar() {
         <div style={{ fontSize: 15, fontWeight: 700, color: '#fff', letterSpacing: '-0.2px' }}>
           Civic Lens
         </div>
+        <span
+          style={{
+            background: 'transparent',
+            borderTop: '1px solid rgba(255,255,255,0.25)',
+            borderRight: '1px solid rgba(255,255,255,0.25)',
+            borderBottom: '1px solid rgba(255,255,255,0.25)',
+            borderLeft: '1px solid rgba(255,255,255,0.25)',
+            borderRadius: 20,
+            fontSize: 11,
+            fontWeight: 600,
+            color: 'rgba(255,255,255,0.9)',
+            padding: '3px 8px',
+            cursor: 'default',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.borderTopColor = 'rgba(255,255,255,0.5)';
+            e.currentTarget.style.borderRightColor = 'rgba(255,255,255,0.5)';
+            e.currentTarget.style.borderBottomColor = 'rgba(255,255,255,0.5)';
+            e.currentTarget.style.borderLeftColor = 'rgba(255,255,255,0.5)';
+            e.currentTarget.style.color = '#fff';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.borderTopColor = 'rgba(255,255,255,0.25)';
+            e.currentTarget.style.borderRightColor = 'rgba(255,255,255,0.25)';
+            e.currentTarget.style.borderBottomColor = 'rgba(255,255,255,0.25)';
+            e.currentTarget.style.borderLeftColor = 'rgba(255,255,255,0.25)';
+            e.currentTarget.style.color = 'rgba(255,255,255,0.9)';
+          }}
+        >
+          📍 Rolla, MO
+        </span>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -64,13 +103,15 @@ export default function Navbar() {
           style={{
             background: 'none',
             border: 'none',
-            color: 'rgba(255,255,255,0.75)',
+            color: 'rgba(255,255,255,0.6)',
             fontSize: 12,
             fontWeight: 500,
             cursor: 'pointer',
             padding: '5px 9px',
             borderRadius: 4,
           }}
+          onMouseEnter={e => { e.currentTarget.style.color = '#fff'; }}
+          onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.6)'; }}
         >
           Home
         </button>
@@ -79,13 +120,15 @@ export default function Navbar() {
           style={{
             background: 'none',
             border: 'none',
-            color: 'rgba(255,255,255,0.75)',
+            color: 'rgba(255,255,255,0.6)',
             fontSize: 12,
             fontWeight: 500,
             cursor: 'pointer',
             padding: '5px 9px',
             borderRadius: 4,
           }}
+          onMouseEnter={e => { e.currentTarget.style.color = '#fff'; }}
+          onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.6)'; }}
         >
           My Reports
         </button>
@@ -145,19 +188,27 @@ export default function Navbar() {
         )}
         {!isAdminUser ? (
           <button
-            onClick={() => window.open('/admin/login', '_blank', 'noopener,noreferrer')}
+            onClick={() => navigate('/admin/login')}
             style={{
               background: 'none',
-              border: 'none',
-              color: 'rgba(255,255,255,0.75)',
-              fontSize: 12,
+              borderTop: 'none',
+              borderRight: 'none',
+              borderBottom: 'none',
+              borderLeft: '1px solid rgba(255,255,255,0.1)',
+              color: 'rgba(255,255,255,0.35)',
+              fontSize: 11,
               fontWeight: 500,
               cursor: 'pointer',
-              padding: '5px 9px',
-              borderRadius: 4,
+              paddingLeft: 16,
+              paddingRight: 9,
+              paddingTop: 5,
+              paddingBottom: 5,
+              borderRadius: 0,
             }}
+            onMouseEnter={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.7)'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = 'rgba(255,255,255,0.35)'; }}
           >
-            Department Login
+            Dept Login
           </button>
         ) : null}
       </div>
