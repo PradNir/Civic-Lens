@@ -9,8 +9,15 @@ root.render(
   <Auth0Provider
     domain={process.env.REACT_APP_AUTH0_DOMAIN}
     clientId={process.env.REACT_APP_AUTH0_CLIENT_ID}
+    cacheLocation="localstorage"
+    useRefreshTokens={true}
+    onRedirectCallback={(appState) => {
+      if (appState?.returnTo) {
+        window.location.replace(appState.returnTo);
+      }
+    }}
     authorizationParams={{
-      redirect_uri: window.location.origin
+      redirect_uri: window.location.origin,
     }}
   >
     <App />

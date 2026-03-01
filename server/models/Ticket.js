@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
 
 const DEPARTMENT_MAP = {
-  Pothole: 'Roads & Transport',
-  'Broken Streetlight': 'Utilities',
-  Graffiti: 'Public Works',
-  Flooding: 'Stormwater Management',
-  'Damaged Sidewalk': 'Roads & Transport',
-  'Illegal Dumping': 'Sanitation',
-  'Noise Complaint': 'Public Safety',
-  Other: 'General Services',
+  Pothole: 'Public Works',
+  'Broken Streetlight': 'Rolla Municipal Utilities',
+  Graffiti: 'Community Development',
+  Flooding: 'Environmental Services',
+  'Damaged Sidewalk': 'Public Works',
+  'Illegal Dumping': 'Environmental Services',
+  'Noise Complaint': 'Police Department',
+  Other: 'Community Development',
 };
 
 const logSchema = new mongoose.Schema({
@@ -26,14 +26,16 @@ const ticketSchema = new mongoose.Schema({
   location: { type: String },
   status: { type: String, default: 'Open' },
   priority: { type: String, default: 'Medium' },
-  department: { type: String },
+  department: { type: String, default: 'Unassigned' },
+  assignedTo: { type: String, default: 'Unassigned' },
+  internalNote: { type: String, default: '' },
   createdAt: { type: Date, default: Date.now },
   log: [logSchema],
 });
 
 ticketSchema.pre('save', function onSave() {
   if (this.category) {
-    this.department = DEPARTMENT_MAP[this.category] || 'General Services';
+    this.department = DEPARTMENT_MAP[this.category] || 'Community Development';
   }
 });
 

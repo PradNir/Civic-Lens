@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
+import API_BASE from '../config/api';
 
 const STATUS_COLORS = {
   Open: { bg: '#FEF9C3', border: '#FDE047', text: '#713F12', dot: '#EAB308' },
@@ -36,7 +37,7 @@ export default function TrackReport() {
       setTicket(null);
 
       try {
-        const res = await axios.get(`https://figure-yields-roles-contributors.trycloudflare.com/api/tickets/${searchId}`);
+        const res = await axios.get(`${API_BASE}/api/tickets/${searchId}`);
         setTicket(res.data);
       } catch (err) {
         setError('Ticket not found. Check your reference number.');

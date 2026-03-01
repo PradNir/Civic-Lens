@@ -36,6 +36,8 @@ MONGO_URI=your_mongodb_connection_string
 GEMINI_API_KEY=your_gemini_api_key
 GEMINI_MODEL=gemini-2.5-flash
 PORT=5000
+AUTH0_AUDIENCE=https://civic-lens-api-v2
+AUTH0_ISSUER_BASE_URL=https://your-tenant.us.auth0.com/
 ```
 
 ### `client/.env`
@@ -44,6 +46,7 @@ PORT=5000
 REACT_APP_API_URL=http://localhost:5000
 REACT_APP_AUTH0_DOMAIN=your-auth0-domain
 REACT_APP_AUTH0_CLIENT_ID=your-auth0-client-id
+REACT_APP_AUTH0_AUDIENCE=https://civic-lens-api-v2
 ```
 
 ## Install
@@ -83,7 +86,40 @@ App URLs:
 
 - `POST /api/tickets/classify` - classify issue image with Gemini
 - `POST /api/tickets` - create ticket
+- `GET /api/tickets` - admin/department ticket list (Auth0 token required)
+- `PATCH /api/tickets/:id` - update status/assignment/note (Auth0 token required)
 - `GET /api/tickets/:id` - fetch ticket by reference ID (e.g. `CVL-4821`)
+
+## Admin / Department Access
+
+- Frontend routes:
+  - `/admin/login` -> department/admin sign-in modal
+  - `/admin` -> protected dashboard
+- Backend enforces JWT verification with Auth0 (`express-oauth2-jwt-bearer`) on protected ticket routes.
+- Access logic:
+  - `admin` role can view/update across departments.
+  - Department users are scoped to their own department.
+
+### Auth0 Setup (Required)
+
+1. Create API in Auth0 with identifier `https://civic-lens-api-v2`.
+2. Authorize the `Civic Lens` SPA to use that API.
+3. Create role `admin` and assign to admin users.
+4. Add a Post Login Action to attach claims to both ID and Access tokens:
+
+```js
+exports.onExecutePostLogin = async (event, api) => {
+  const roles = event.authorization?.roles || [];
+  api.idToken.setCustomClaim('https://civic-lens/roles', roles);
+  api.accessToken.setCustomClaim('https://civic-lens/roles', roles);
+
+  const dept = event.user.app_metadata?.department || '';
+  if (dept) {
+    api.idToken.setCustomClaim('https://civic-lens/department', dept);
+    api.accessToken.setCustomClaim('https://civic-lens/department', dept);
+  }
+};
+```
 
 ## Build
 

@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
+import API_BASE from '../config/api';
 
 const CATEGORIES = [
   { id: 'pothole', label: 'Pothole', icon: '[Pothole]' },
@@ -46,7 +47,7 @@ export default function SubmitReport() {
       }
 
       try {
-        const res = await axios.post('https://figure-yields-roles-contributors.trycloudflare.com/api/tickets/classify', {
+        const res = await axios.post(`${API_BASE}/api/tickets/classify`, {
           imageBase64: base64,
           mimeType: mime,
         });
@@ -71,7 +72,7 @@ export default function SubmitReport() {
     setSubmitting(true);
 
     try {
-      const res = await axios.post('https://figure-yields-roles-contributors.trycloudflare.com/api/tickets', {
+      const res = await axios.post(`${API_BASE}/api/tickets`, {
         description: desc,
         category,
         photoUrl: preview,

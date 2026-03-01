@@ -1,10 +1,16 @@
+// Civic Lens Admin - updated for PickHacks 2026
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth0 } from '@auth0/auth0-react';
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { loginWithRedirect, logout, user, isAuthenticated } = useAuth0();
+  const isAdminUser = user?.['https://civic-lens/roles']?.includes('admin');
+  const hasDepartmentAccess = Boolean(user?.['https://civic-lens/department']);
+  const isAdminContext = location.pathname.startsWith('/admin');
+  const homeTarget = isAdminUser || hasDepartmentAccess || isAdminContext ? '/admin' : '/';
 
   return (
     <nav
@@ -22,7 +28,7 @@ export default function Navbar() {
       }}
     >
       <div
-        onClick={() => navigate('/')}
+        onClick={() => navigate(homeTarget)}
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -54,7 +60,7 @@ export default function Navbar() {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
         <button
-          onClick={() => navigate('/')}
+          onClick={() => navigate(homeTarget)}
           style={{
             background: 'none',
             border: 'none',
@@ -83,6 +89,23 @@ export default function Navbar() {
         >
           My Reports
         </button>
+        {isAdminUser ? (
+          <button
+            onClick={() => window.open('/admin', '_blank', 'noopener,noreferrer')}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'rgba(255,255,255,0.75)',
+              fontSize: 12,
+              fontWeight: 500,
+              cursor: 'pointer',
+              padding: '5px 9px',
+              borderRadius: 4,
+            }}
+          >
+            Admin
+          </button>
+        ) : null}
 
         {isAuthenticated ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -120,6 +143,23 @@ export default function Navbar() {
             Sign in
           </button>
         )}
+        {!isAdminUser ? (
+          <button
+            onClick={() => window.open('/admin/login', '_blank', 'noopener,noreferrer')}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'rgba(255,255,255,0.75)',
+              fontSize: 12,
+              fontWeight: 500,
+              cursor: 'pointer',
+              padding: '5px 9px',
+              borderRadius: 4,
+            }}
+          >
+            Department Login
+          </button>
+        ) : null}
       </div>
     </nav>
   );
